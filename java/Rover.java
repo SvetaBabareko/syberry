@@ -20,16 +20,25 @@ public class Rover {
                     System.out.println("Data is not correct!");
                     return;
                 }
-                if (power[i][j] == Integer.MAX_VALUE) {
-                    if (i == 0 & j == 0)
-                        power[i][j] = map[i][j];
-                    else if (i == 0) {
-                        power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
-                    } else if (j == 0) {
-                        power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
-                    } else {
-                        power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
-                        power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
+                if (i == 0 & j == 0) {
+                    power[i][j] = map[i][j];
+                } else if (i == 0) {
+                    power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
+                } else if (j == 0) {
+                    power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
+                } else {
+                    power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
+                    power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
+
+                    if (j != map[i].length - 1 && Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i][j] < power[i - 1][j]) {
+                        power[i - 1][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i][j], power[i - 1][j]);
+                        i--;
+                        j--;
+                    }
+                    if (Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j] < power[i][j - 1]) {
+                        power[i][j - 1] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j], power[i][j - 1]);
+                        i--;
+                        j--;
                     }
                 }
             }
@@ -91,8 +100,6 @@ public class Rover {
             }*/
 
     public static void main(String[] args) {
-        System.out.println("5 12 17 9 12 15 14!!!!!!");
-
         int[][] map = {{0, 4}, {1, 3}};//5
         calculateRoverPath(map);
         int[][] map1 = {{0, 2, 3}, {6, 1, 4}, {5, 0, 8}}; //12
@@ -107,6 +114,23 @@ public class Rover {
         calculateRoverPath(map6);
         int[][] map5 = {{1, 1, 6, 7, 7}, {1, 1, 6, 7, 8}, {1, 6, 7, 8, 9}};//15
         calculateRoverPath(map5);
+        int[][] map7 = {{1, 15, 6, 7, 3}, {1, 8, 3, 3, 3}, {1, 20, 3, 9, 3}, {1, 2, 2, 10, 3}, {1, 19, 43, 5, 4}};//16
+        calculateRoverPath(map7);
+        int[][] map8 = {{0, 13, 0, 0, 0}, {0, 0, 0, 15, 0}};// 7
+        calculateRoverPath(map8);
+        int[][] map9 = {{0, 0, 6}, {0, 5, 0}, {0, 0, 0}};// 4
+        calculateRoverPath(map9);
+        int[][] map10 = {{0, 0, 0, 20, 0, 0, 0, 0, 0, 40, 45, 10, 30},
+                {18, 30, 0, 25, 0, 18, 100, 16, 0, 0, 0, 0, 0},
+                {10, 80, 0, 50, 0, 0, 5, 190, 100, 150, 50, 30, 0},
+                {16, 40, 0, 26, 0, 0, 0, 20, 0, 0, 0, 48, 0},
+                {17, 0, 0, 27, 28, 40, 0, 25, 0, 49, 0, 100, 0},
+                {20, 0, 10, 60, 0, 50, 0, 30, 0, 70, 0, 0, 0},
+                {21, 0, 5, 10, 0, 3, 0, 20, 0, 50, 100, 150, 190},
+                {22, 0, 0, 0, 0, 0, 0, 131, 0, 0, 0, 0, 0}};// 51
+        calculateRoverPath(map10);
+        int[][] map11 = {{0, 0, 0, 0}, {3, 15, 16, 0}, {18, 0, 0, 0}, {19, 0, 21, 22}, {20, 0, 0, 0}};//11
+        calculateRoverPath(map11);
     }
 }
 
