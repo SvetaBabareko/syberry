@@ -8,10 +8,10 @@ public class Rover {
     public static void calculateRoverPath(int[][] map) {
 
         // try(FileWriter fileWriter = new FileWriter("path-plan.txt", false)){
-        int dp[][] = new int[map.length][map[map.length - 1].length];
+        int[][] power = new int[map.length][map[map.length - 1].length];
 
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], Integer.MAX_VALUE);
+        for (int[] ints : power) {
+            Arrays.fill(ints, Integer.MAX_VALUE);
         }
 
         for (int i = 0; i < map.length; i++)
@@ -20,61 +20,55 @@ public class Rover {
                     System.out.println("Data is not correct!");
                     return;
                 }
-
-                if (dp[i][j] == Integer.MAX_VALUE) {
+                if (power[i][j] == Integer.MAX_VALUE) {
                     if (i == 0 & j == 0)
-                        dp[i][j] = map[i][j];
+                        power[i][j] = map[i][j];
                     else if (i == 0) {
-                        dp[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + dp[i][j - 1], dp[i][j]);
+                        power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
                     } else if (j == 0) {
-                        dp[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + dp[i - 1][j], dp[i][j]);
+                        power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
                     } else {
-                        dp[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + dp[i - 1][j], dp[i][j]);
-                        dp[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + dp[i][j - 1], dp[i][j]);
+                        power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
+                        power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
                     }
                 }
             }
-        System.out.println(dp[dp.length - 1][dp[0].length - 1] + " ");
-
+        System.out.println(power[power.length - 1][power[0].length - 1] + " ");
 
         int count = 0;
         int i = map.length - 1;
         int j = map[0].length - 1;
-
-        int temp = dp[i][j];
+        int temp = power[i][j];
 
         String[] result = new String[map.length * map[0].length];
-        result[count] = "[" + (map.length - 1) + "][" + (map[0].length - 1) + "]";
+        result[count] = "[" + (i) + "][" + (j) + "]";
 
-        // for (int i = map.length - 1; i >= 0; ) {
-        //   for (int j = map[i].length - 1; j >= 0; )
         do {
             if (i != 0) {
-                if (temp - (Math.abs(map[i - 1][j] - map[i][j]) + 1) == dp[i - 1][j]) {
+                if (temp - (Math.abs(map[i - 1][j] - map[i][j]) + 1) == power[i - 1][j]) {
                     result[++count] = "[" + (i - 1) + "][" + j + "]";
-                    temp = dp[--i][j];
+                    temp = power[--i][j];
                     continue;
                 }
             }
             if (j != 0) {
-                if (temp - (Math.abs(map[i][j - 1] - map[i][j]) + 1) == dp[i][j - 1]) {
+                if (temp - (Math.abs(map[i][j - 1] - map[i][j]) + 1) == power[i][j - 1]) {
                     result[++count] = "[" + i + "][" + (j - 1) + "]";
-                    temp = dp[i][--j];
+                    temp = power[i][--j];
                     continue;
                 }
             }
             if (i != map.length - 1) {
-                if (temp - (Math.abs(map[i + 1][j] - map[i + 1][j]) + 1) == dp[i + 1][j]) {
+                if (temp - (Math.abs(map[i + 1][j] - map[i][j]) + 1) == power[i + 1][j]) {
                     result[++count] = "[" + (i + 1) + "][" + j + "]";
-                    temp = dp[++i][j];
+                    temp = power[++i][j];
                     continue;
                 }
             }
             if (j != map[i].length - 1) {
-                if (temp - (Math.abs(map[i][j + 1] - map[i][j + 1]) + 1) == dp[i][j + 1]) {
+                if (temp - (Math.abs(map[i][j + 1] - map[i][j]) + 1) == power[i][j + 1]) {
                     result[++count] = "[" + i + "][" + (j + 1) + "]";
-                    temp = dp[i][++j];
-                    continue;
+                    temp = power[i][++j];
                 }
             }
         } while (!(i == 0 && j == 0));
@@ -87,7 +81,6 @@ public class Rover {
             }
         }
         System.out.println("");
-
     }
 
     // fileWriter.write("[0][0]->[1][0]->[1][1]");
@@ -114,42 +107,6 @@ public class Rover {
         calculateRoverPath(map6);
         int[][] map5 = {{1, 1, 6, 7, 7}, {1, 1, 6, 7, 8}, {1, 6, 7, 8, 9}};//15
         calculateRoverPath(map5);
-
-
     }
-
-    private static int[][] initMap() {
-        //int[][] map = {{0, 4}, {1, 3}};//5
-        // int [][] map = {{0,2,3},{6,1,4},{5,0,8}}; //12
-       /* 0 2 3 4 1
-        2 3 4 4 1
-        3 4 5 6 2
-        4 5 6 7 1
-        6 7 8 7 1*/
-        // int[][] map = {{0, 2, 3, 4, 1}, {2, 3, 4, 4, 1}, {3, 4, 5, 6, 2}, {4, 5, 6, 7, 1}, {6, 7, 8, 7, 1}};//17
-        /*0 1 1 1 0
-          1 1 3 1 1
-          0 1 1 1 0
-          0 0 0 0 0*/
-        //int [][] map = {{0,1,1,1,0}, {1,1,3,1,1}, {0,1,1,1,0}, {0,0,0,0,0}};//9
-        /*1 1 2 3 4
-        1 0 1 2 3
-        2 1 1 1 2
-        3 3 1 0 1
-        4 3 1 1 0*/
-        // int [][] map = {{1,1,2,3,4}, {1,0,1,2,3},{2,1,1,1,2},{3,3,1,0,1},{4,3,1,1,0}};//12
-        /*1 1 6 7 7
-        1 1 6 7 8
-        1 6 7 8 9*/
-        //int [][] map = {{1,1,6,7,7}, {1,1,6,7,8},{1,6,7,8,9}};//15
-        /*3 4 4 4 4 3
-        3 2 1 1 1 4
-        4 2 1 1 3 4
-        4 4 2 2 3 4*/
-        int[][] map = {{3, 4, 4, 4, 4, 3}, {3, 2, 1, 1, 1, 4}, {4, 2, 1, 1, 3, 4}, {4, 4, 2, 2, 3, 4}};//14
-
-        return map;
-    }
-
 }
 
