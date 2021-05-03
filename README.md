@@ -1,2 +1,2 @@
-# Sveta-Babareko-Test-Task
+# Sveta-Babareko-Academy-Test-Task
 
