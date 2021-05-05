@@ -89,7 +89,7 @@ public class Rover {
             fileWriter.write("\nfuel: " + power[power.length - 1][power[0].length - 1]);
 
         } catch (IOException ex) {
-            ex.getMessage();
+            String message = ex.getMessage();
         }
     }
 }
