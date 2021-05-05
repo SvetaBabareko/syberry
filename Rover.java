@@ -9,9 +9,7 @@ public class Rover {
 
         int[][] power = new int[map.length][map[map.length - 1].length];
 
-        for (int[] ints : power) {
-            Arrays.fill(ints, Integer.MAX_VALUE);
-        }
+        Arrays.stream(power).forEach(a -> Arrays.fill(a, Integer.MAX_VALUE));
 
         for (int i = 0; i < map.length; i++)
             for (int j = 0; j < map[i].length; j++) {
