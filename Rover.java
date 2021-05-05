@@ -14,7 +14,7 @@ public class Rover {
         for (int i = 0; i < map.length; i++)
             for (int j = 0; j < map[i].length; j++) {
                 if (map[i][j] < 0) {
-                    System.out.println("Data is not correct!");
+                   // System.out.println("Data is not correct!");
                     return;
                 }
                 if (i == 0 & j == 0) {
@@ -89,7 +89,7 @@ public class Rover {
             fileWriter.write("\nfuel: " + power[power.length - 1][power[0].length - 1]);
 
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            ex.getMessage();
         }
     }
 }
