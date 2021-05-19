@@ -5,35 +5,36 @@ import java.util.Arrays;
 
 public class Rover {
 
-    public static void calculateRoverPath(int[][] map) {
+    public static void calculateRoverPath(String[][] map) {
 
         int[][] power = new int[map.length][map[map.length - 1].length];
 
         Arrays.stream(power).forEach(a -> Arrays.fill(a, Integer.MAX_VALUE));
 
+
         for (int i = 0; i < map.length; i++)
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j] < 0) {
-                   // System.out.println("Data is not correct!");
+                if (Integer.parseInt(map[i][j]) < 0) {
+                    // System.out.println("Data is not correct!");
                     return;
                 }
                 if (i == 0 & j == 0) {
-                    power[i][j] = map[i][j];
+                    power[i][j] = Integer.parseInt(map[i][j]);
                 } else if (i == 0) {
-                    power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
+                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
                 } else if (j == 0) {
-                    power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
+                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
                 } else {
-                    power[i][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i - 1][j], power[i][j]);
-                    power[i][j] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j - 1], power[i][j]);
+                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
+                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
 
-                    if (j != map[i].length - 1 && Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i][j] < power[i - 1][j]) {
-                        power[i - 1][j] = Math.min(Math.abs(map[i - 1][j] - map[i][j]) + 1 + power[i][j], power[i - 1][j]);
+                    if (j != map[i].length - 1 && Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i - 1][j]) {
+                        power[i - 1][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i - 1][j]);
                         i--;
                         j--;
                     }
-                    if (Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j] < power[i][j - 1]) {
-                        power[i][j - 1] = Math.min(Math.abs(map[i][j - 1] - map[i][j]) + 1 + power[i][j], power[i][j - 1]);
+                    if (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i][j - 1]) {
+                        power[i][j - 1] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i][j - 1]);
                         i--;
                         j--;
                     }
@@ -50,28 +51,28 @@ public class Rover {
 
         do {
             if (i != 0) {
-                if (temp - (Math.abs(map[i - 1][j] - map[i][j]) + 1) == power[i - 1][j]) {
+                if (temp - (Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1) == power[i - 1][j]) {
                     result[++count] = "[" + (i - 1) + "][" + j + "]";
                     temp = power[--i][j];
                     continue;
                 }
             }
             if (j != 0) {
-                if (temp - (Math.abs(map[i][j - 1] - map[i][j]) + 1) == power[i][j - 1]) {
+                if (temp - (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1) == power[i][j - 1]) {
                     result[++count] = "[" + i + "][" + (j - 1) + "]";
                     temp = power[i][--j];
                     continue;
                 }
             }
             if (i != map.length - 1) {
-                if (temp - (Math.abs(map[i + 1][j] - map[i][j]) + 1) == power[i + 1][j]) {
+                if (temp - (Math.abs(Integer.parseInt(map[i + 1][j]) - Integer.parseInt(map[i][j])) + 1) == power[i + 1][j]) {
                     result[++count] = "[" + (i + 1) + "][" + j + "]";
                     temp = power[++i][j];
                     continue;
                 }
             }
             if (j != map[i].length - 1) {
-                if (temp - (Math.abs(map[i][j + 1] - map[i][j]) + 1) == power[i][j + 1]) {
+                if (temp - (Math.abs(Integer.parseInt(map[i][j + 1]) - Integer.parseInt(map[i][j])) + 1) == power[i][j + 1]) {
                     result[++count] = "[" + i + "][" + (j + 1) + "]";
                     temp = power[i][++j];
                 }
