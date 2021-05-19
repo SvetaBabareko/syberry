@@ -5,41 +5,52 @@ import java.util.Arrays;
 
 public class Rover {
 
-    public static void calculateRoverPath(String[][] map) {
+  public static void calculateRoverPath(String[][] map) {
 
         int[][] power = new int[map.length][map[map.length - 1].length];
 
         Arrays.stream(power).forEach(a -> Arrays.fill(a, Integer.MAX_VALUE));
 
-
-        for (int i = 0; i < map.length; i++)
-            for (int j = 0; j < map[i].length; j++) {
-                if (Integer.parseInt(map[i][j]) < 0) {
-                    // System.out.println("Data is not correct!");
-                    return;
-                }
-                if (i == 0 & j == 0) {
-                    power[i][j] = Integer.parseInt(map[i][j]);
-                } else if (i == 0) {
-                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
-                } else if (j == 0) {
-                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
-                } else {
-                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
-                    power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
-
-                    if (j != map[i].length - 1 && Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i - 1][j]) {
-                        power[i - 1][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i - 1][j]);
-                        i--;
-                        j--;
+        try {
+            for (int i = 0; i < map.length; i++)
+                for (int j = 0; j < map[i].length; j++) {
+                    boolean result = map[i][j].matches("-*\\d*|X");
+                    if (!result) {
+                        throw new CannotStartMovement();
                     }
-                    if (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i][j - 1]) {
-                        power[i][j - 1] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i][j - 1]);
-                        i--;
-                        j--;
+                    if (i == 0 & j == 0) {
+                        if(map[i][j].equals("X")){
+                            throw new CannotStartMovement();
+                        }
+                        power[i][j] = Integer.parseInt(map[i][j]);
+                    } else if (i == 0) {
+                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
+                    } else if (j == 0) {
+                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
+                    } else {
+                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
+                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
+
+                        if (j != map[i].length - 1 && Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i - 1][j]) {
+                            power[i - 1][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i - 1][j]);
+                            i--;
+                            j--;
+                        }
+                        if (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i][j - 1]) {
+                            power[i][j - 1] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i][j - 1]);
+                            i--;
+                            j--;
+                        }
                     }
                 }
+        } catch (Exception | CannotStartMovement e) {
+            try (FileWriter fileWriter = new FileWriter("path-plan.txt", false)) {
+                fileWriter.write("Cannot start a movement because data is incorrect.");
+            } catch (IOException ex) {
+                String message = ex.getMessage();
             }
+            System.exit(0);
+        }
 
         int count = 0;
         int i = map.length - 1;
@@ -92,6 +103,10 @@ public class Rover {
         } catch (IOException ex) {
             String message = ex.getMessage();
         }
+    }
+
+
+    private static class CannotStartMovement extends Throwable {
     }
 }
 
