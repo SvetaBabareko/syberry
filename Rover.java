@@ -29,7 +29,7 @@ public class Rover {
                         power[i][j] = Math.abs(Integer.parseInt(map[i][j]));
                     } else if ((i == 0 || power[i - 1][j] == Integer.MAX_VALUE) && power[i][j - 1] != Integer.MAX_VALUE) {
                         power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
-                        if (power[i - 1][j - 1] != Integer.MAX_VALUE) {
+                        if (i!=0 && power[i - 1][j] == Integer.MAX_VALUE && j!=0 && power[i - 1][j - 1] != Integer.MAX_VALUE) {
                             power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j - 1], power[i][j]);
                         }
                     } else if ((j == 0 || power[i][j - 1] == Integer.MAX_VALUE) && power[i - 1][j] != Integer.MAX_VALUE) {
@@ -155,7 +155,6 @@ public class Rover {
             String message = ex.getMessage();
         }
     }
-
 
 
     private static class CannotStartMovement extends Throwable {
