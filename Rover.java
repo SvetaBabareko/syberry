@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Rover {
 
-  public static void calculateRoverPath(String[][] map) {
+   public static void calculateRoverPath(String[][] map) {
 
         int[][] power = new int[map.length][map[map.length - 1].length];
 
@@ -18,32 +18,43 @@ public class Rover {
                     if (!result) {
                         throw new CannotStartMovement();
                     }
+                    if (map[i][j].equals("X")) {
+                        continue;
+                    }
                     if (i == 0 & j == 0) {
-                        if(map[i][j].equals("X")){
+                        if (map[i][j].equals("X")) {
                             throw new CannotStartMovement();
                         }
-                        power[i][j] = Integer.parseInt(map[i][j]);
-                    } else if (i == 0) {
+                        power[i][j] = Math.abs(Integer.parseInt(map[i][j]));
+                    } else if ((i == 0 || power[i - 1][j] == Integer.MAX_VALUE) && power[i][j - 1] != Integer.MAX_VALUE) {
                         power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
-                    } else if (j == 0) {
+                    } else if ((j == 0 || power[i][j - 1] == Integer.MAX_VALUE) && power[i - 1][j] != Integer.MAX_VALUE) {
                         power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
                     } else {
-                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
-                        power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
+                        if (power[i - 1][j] != Integer.MAX_VALUE) {
+                            power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i - 1][j], power[i][j]);
+                        }
+                        if (power[i][j - 1] != Integer.MAX_VALUE) {
+                            power[i][j] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j - 1], power[i][j]);
+                        }
 
-                        if (j != map[i].length - 1 && Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i - 1][j]) {
+                        if ((j != map[i].length - 1)
+                                && Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i - 1][j]) {
                             power[i - 1][j] = Math.min(Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i - 1][j]);
                             i--;
                             j--;
                         }
-                        if (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i][j - 1]) {
+                        if (power[i][j - 1] != Integer.MAX_VALUE &&
+                                Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j] < power[i][j - 1]) {
                             power[i][j - 1] = Math.min(Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1 + power[i][j], power[i][j - 1]);
                             i--;
                             j--;
                         }
                     }
                 }
-        } catch (Exception | CannotStartMovement e) {
+
+        } catch (Exception |
+                CannotStartMovement e) {
             try (FileWriter fileWriter = new FileWriter("path-plan.txt", false)) {
                 fileWriter.write("Cannot start a movement because data is incorrect.");
             } catch (IOException ex) {
@@ -61,28 +72,28 @@ public class Rover {
         result[count] = "[" + (i) + "][" + (j) + "]";
 
         do {
-            if (i != 0) {
+            if (i != 0 && power[i - 1][j] != Integer.MAX_VALUE) {
                 if (temp - (Math.abs(Integer.parseInt(map[i - 1][j]) - Integer.parseInt(map[i][j])) + 1) == power[i - 1][j]) {
                     result[++count] = "[" + (i - 1) + "][" + j + "]";
                     temp = power[--i][j];
                     continue;
                 }
             }
-            if (j != 0) {
+            if (j != 0 && power[i][j - 1] != Integer.MAX_VALUE) {
                 if (temp - (Math.abs(Integer.parseInt(map[i][j - 1]) - Integer.parseInt(map[i][j])) + 1) == power[i][j - 1]) {
                     result[++count] = "[" + i + "][" + (j - 1) + "]";
                     temp = power[i][--j];
                     continue;
                 }
             }
-            if (i != map.length - 1) {
+            if (i != map.length - 1 && power[i + 1][j] != Integer.MAX_VALUE) {
                 if (temp - (Math.abs(Integer.parseInt(map[i + 1][j]) - Integer.parseInt(map[i][j])) + 1) == power[i + 1][j]) {
                     result[++count] = "[" + (i + 1) + "][" + j + "]";
                     temp = power[++i][j];
                     continue;
                 }
             }
-            if (j != map[i].length - 1) {
+            if (j != map[i].length - 1 && power[i][j + 1] != Integer.MAX_VALUE) {
                 if (temp - (Math.abs(Integer.parseInt(map[i][j + 1]) - Integer.parseInt(map[i][j])) + 1) == power[i][j + 1]) {
                     result[++count] = "[" + i + "][" + (j + 1) + "]";
                     temp = power[i][++j];
@@ -90,7 +101,8 @@ public class Rover {
             }
         } while (!(i == 0 && j == 0));
 
-        try (FileWriter fileWriter = new FileWriter("path-plan.txt", false)) {
+        try (
+                FileWriter fileWriter = new FileWriter("path-plan.txt", false)) {
             for (int c = count; c >= 0; c--) {
                 fileWriter.write(result[c]);
                 if (c > 0) {
@@ -100,10 +112,12 @@ public class Rover {
             fileWriter.write("\nsteps: " + count);
             fileWriter.write("\nfuel: " + power[power.length - 1][power[0].length - 1]);
 
-        } catch (IOException ex) {
+        } catch (
+                IOException ex) {
             String message = ex.getMessage();
         }
     }
+
 
 
     private static class CannotStartMovement extends Throwable {
